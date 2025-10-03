@@ -144,6 +144,51 @@
     font-style: italic;
     color: #2c3e50;
   }
+  .site-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    padding: 15px;
+    border-radius: 10px;
+    border: 3px solid #2c3e50;
+  }
+  .developer-info {
+    text-align: center;
+    margin-top: 30px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-top: 3px solid #3498db;
+  }
+  .developer-name {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 18px;
+  }
+  .developer-contact {
+    color: #7f8c8d;
+    font-size: 16px;
+    margin-top: 5px;
+  }
+  .download-link {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    border: 1px solid #3498db;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  .download-link:hover {
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+  }
   @media print {
     .no-print { display:none; }
     body { background:white; padding:0; margin:0; }
@@ -169,11 +214,17 @@
     }
     .banque-section { page-break-inside: avoid; }
     .letter { margin-top: 20mm; margin-bottom: 20mm; }
+    .site-title, .developer-info { display: none; }
   }
 </style>
 </head>
 <body>
 <div class="app">
+  <!-- Grand titre du site -->
+  <div class="site-title no-print">
+     MES OPÉRATIONS BANCAIRES 
+  </div>
+
   <div class="no-print controls">
     <div class="upload-section">
       <h3>Charger le fichier Excel de référence</h3>
@@ -192,29 +243,29 @@
         <table class="template-table">
           <thead>
             <tr>
-              <th>NOM DU COMPTE</th>
+              <th>Ordonneur</th>
               <th>BANQUE</th>
               <th>AGENCE</th>
               <th>Compte</th>
               <th>NOM</th>
-              <th>F</th>
+              <th>INFORMATION SOCIETE (PIED DE PAGE)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="template-example">SOCIETE ALPHA BMCI</td>
-              <td class="template-example">BMCI</td>
+              <td class="template-example">ALPHA BMCE</td>
+              <td class="template-example">BANK OF AFRICA</td>
               <td class="template-example">RABAT</td>
               <td class="template-example">12345678901</td>
               <td class="template-example">SOCIETE ALPHA</td>
-              <td class="template-example">SOCIETE A - Capital 100.000 DH - RC 12345</td>
+              <td class="template-example">SOCIETE ALPHA - Capital 100.000 DH - RC 12345</td>
             </tr>
             <tr>
-              <td>Nom du compte</td>
-              <td>Nom de la banque</td>
+              <td>Nom du compte </td>
+              <td>Nom de la banque(bmci/banque populaire)</td>
               <td>Agence (optionnel)</td>
-              <td>Numéro de compte</td>
-              <td>Nom </td>
+              <td>Numéro de compte (RIB)</td>
+              <td>Nom</td>
               <td>Pied de page (optionnel)</td>
             </tr>
           </tbody>
@@ -227,6 +278,7 @@
             <li>Utilisez le format : <code>NOM_SOCIETE - TYPE_COMPTE</code> pour l'ordonneur</li>
             <li>Les fichiers <strong>.xlsx</strong> et <strong>.xls</strong> sont acceptés</li>
             <li>Évitez les cellules vides dans les colonnes obligatoires</li>
+            <li>Pour télécharger le modèle, <a href="https://docs.google.com/spreadsheets/d/1aC21EGEdwdt-jo8QawhAmMrD_q64Rjk-/edit?usp=sharing&ouid=106645687971409921292&rtpof=true&sd=true" target="_blank" class="download-link">cliquez ici</a></li>
           </ul>
         </div>
         
@@ -245,6 +297,9 @@
         </select>
       </label>
     </div>
+    
+    <!-- Ajout du champ Ville -->
+    <label>Ville : <input type="text" id="ville" value="RABAT" placeholder="Saisir votre ville"></label>
     
     <label>Date : <input type="date" id="date"></label>
     
@@ -281,7 +336,7 @@
       <label>Motif du virement (optionnel) : <textarea id="motifVirement" placeholder="Raison du virement... (laisser vide pour ne pas afficher)"></textarea></label>
       
       <div class="checkbox-container">
-        <label><input type="checkbox" id="srbm"> SRBM</label>
+        <label><input type="checkbox" id="srbm"> SRBM (VIREMENT EXPRESS) </label>
       </div>
     </div>
     
@@ -308,9 +363,9 @@
       
       <label>Montant en chiffres (Dhs) : <input type="number" id="montantMise"></label>
       
-      <label>Nom du bénéficiaire : <input type="text" id="nomBeneficiaire" placeholder="Ex: AMINE AARAB"></label>
+      <label>Nom du bénéficiaire : <input type="text" id="nomBeneficiaire" placeholder="Ex: AMINE MOHAMED"></label>
       
-      <label>Numéro de CIN : <input type="text" id="cinBeneficiaire" placeholder="Ex: AB123456"></label>
+      <label>Numéro de CIN : <input type="text" id="cinBeneficiaire" placeholder="Ex: AD123456"></label>
     </div>
     
     <div class="releve-fields">
@@ -419,6 +474,12 @@
     
     <button onclick="generateDocument()" class="btn-primary">Générer</button>
     <button onclick="window.print()" class="btn-secondary">Imprimer</button>
+    
+    <!-- Informations du développeur -->
+    <div class="developer-info no-print">
+      <div class="developer-name">Développé par: AA.LENS</div>
+      <div class="developer-contact">Contact: aarabamine17@gmail.com INSTA:2A.LENS </div>
+    </div>
   </div>
 
   <div class="letter" id="documentOutput"></div>
@@ -732,6 +793,7 @@ function generateDocument() {
 // Générer l'ordre de virement
 function generateVirement() {
   const date = document.getElementById("date").value || "";
+  const ville = document.getElementById("ville").value || "Temara";
   const montantChiffre = parseInt(document.getElementById("montantChiffre").value) || 0;
   const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
   const isSRBM = document.getElementById("srbm").checked;
@@ -773,7 +835,7 @@ function generateVirement() {
   const template = `
 ${showHeader ? `<div class="letter-header">${emetteurName}</div>` : ''}
 
-<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+<div class="right"><b>${ville} le ${formatDate(date)}</b></div>
 
 <div class="center">À l'attention de Monsieur le Directeur<br><b>${ordonBanq}</b></div>
 
@@ -794,6 +856,7 @@ ${showHeader && footer ? `<div class="letter-footer">${footer}</div>` : ''}
 
 function generateMise() {
   const date = document.getElementById("date").value || "";
+  const ville = document.getElementById("ville").value || "Temara";
   const montantChiffre = parseInt(document.getElementById("montantMise").value) || 0;
   const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
   const nomBeneficiaire = document.getElementById("nomBeneficiaire").value || "";
@@ -825,7 +888,7 @@ function generateMise() {
   const template = `
 ${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
 
-<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+<div class="right"><b>${ville} le ${formatDate(date)}</b></div>
 
 <div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
 
@@ -845,6 +908,7 @@ ${showHeader && compteFooter ? `<div class="letter-footer">${compteFooter || ''}
 
 function generateReleve() {
   const date = document.getElementById("date").value || "";
+  const ville = document.getElementById("ville").value || "Temara";
   const mois = document.getElementById("moisReleve").value;
   const annee = document.getElementById("anneeReleve").value;
   const showHeader = document.getElementById("headerCheckbox").checked;
@@ -880,7 +944,7 @@ function generateReleve() {
   const template = `
 ${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
 
-<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+<div class="right"><b>${ville} le ${formatDate(date)}</b></div>
 
 <div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
 
@@ -900,6 +964,7 @@ ${showHeader && compteFooter ? `<div class="letter-footer">${compteFooter || ''}
 
 function generateCredit() {
   const date = document.getElementById("date").value || "";
+  const ville = document.getElementById("ville").value || "Temara";
   const dateOperation = document.getElementById("dateOperationCredit").value || "";
   const montantChiffre = parseInt(document.getElementById("montantCredit").value) || 0;
   const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
@@ -931,7 +996,7 @@ function generateCredit() {
   const template = `
 ${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
 
-<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+<div class="right"><b>${ville} le ${formatDate(date)}</b></div>
 
 <div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
 
@@ -951,6 +1016,7 @@ ${showHeader && compteFooter ? `<div class="letter-footer">${compteFooter || ''}
 
 function generateDebit() {
   const date = document.getElementById("date").value || "";
+  const ville = document.getElementById("ville").value || "Temara";
   const dateOperation = document.getElementById("dateOperationDebit").value || "";
   const montantChiffre = parseInt(document.getElementById("montantDebit").value) || 0;
   const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
@@ -982,7 +1048,7 @@ function generateDebit() {
   const template = `
 ${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
 
-<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+<div class="right"><b>${ville} le ${formatDate(date)}</b></div>
 
 <div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
 
