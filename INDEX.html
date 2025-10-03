@@ -192,7 +192,7 @@
         <table class="template-table">
           <thead>
             <tr>
-              <th>Ordonneur</th>
+              <th>NOM DU COMPTE</th>
               <th>BANQUE</th>
               <th>AGENCE</th>
               <th>Compte</th>
@@ -202,19 +202,19 @@
           </thead>
           <tbody>
             <tr>
-              <td class="template-example">SOCIETE A - COMPTE COURANT</td>
-              <td class="template-example">BANK OF AFRICA</td>
-              <td class="template-example">Temara</td>
+              <td class="template-example">SOCIETE ALPHA BMCI</td>
+              <td class="template-example">BMCI</td>
+              <td class="template-example">RABAT</td>
               <td class="template-example">12345678901</td>
-              <td class="template-example">FOURNISSEUR A</td>
+              <td class="template-example">SOCIETE ALPHA</td>
               <td class="template-example">SOCIETE A - Capital 100.000 DH - RC 12345</td>
             </tr>
             <tr>
-              <td>Nom de l'émetteur</td>
+              <td>Nom du compte</td>
               <td>Nom de la banque</td>
               <td>Agence (optionnel)</td>
               <td>Numéro de compte</td>
-              <td>Nom du bénéficiaire</td>
+              <td>Nom </td>
               <td>Pied de page (optionnel)</td>
             </tr>
           </tbody>
@@ -286,9 +286,25 @@
     </div>
     
     <div class="mise-fields">
-      <label>Compte à débiter :
-        <select id="compteMise"></select>
-      </label>
+      <div class="mode-selection">
+        <label><strong>Mode de saisie :</strong></label>
+        <div class="mode-buttons">
+          <div class="mode-btn active" onclick="setMiseMode('manuel')">Saisie Manuelle</div>
+          <div class="mode-btn" onclick="setMiseMode('excel')">Sélection Excel</div>
+        </div>
+      </div>
+      
+      <div class="manuel-mise-fields">
+        <label>Compte à débiter : <input type="text" id="compteMiseManuel" placeholder="Numéro de compte"></label>
+        <label>Banque du compte : <input type="text" id="banqueMiseManuel" placeholder="Nom de la banque"></label>
+        <label>Agence (optionnel) : <input type="text" id="agenceMiseManuel" placeholder="Agence"></label>
+      </div>
+      
+      <div class="excel-mise-fields" style="display:none;">
+        <label>Compte à débiter :
+          <select id="compteMise"></select>
+        </label>
+      </div>
       
       <label>Montant en chiffres (Dhs) : <input type="number" id="montantMise"></label>
       
@@ -298,9 +314,25 @@
     </div>
     
     <div class="releve-fields">
-      <label>Compte demandé :
-        <select id="compteReleve"></select>
-      </label>
+      <div class="mode-selection">
+        <label><strong>Mode de saisie :</strong></label>
+        <div class="mode-buttons">
+          <div class="mode-btn active" onclick="setReleveMode('manuel')">Saisie Manuelle</div>
+          <div class="mode-btn" onclick="setReleveMode('excel')">Sélection Excel</div>
+        </div>
+      </div>
+      
+      <div class="manuel-releve-fields">
+        <label>Compte demandé : <input type="text" id="compteReleveManuel" placeholder="Numéro de compte"></label>
+        <label>Banque du compte : <input type="text" id="banqueReleveManuel" placeholder="Nom de la banque"></label>
+        <label>Agence (optionnel) : <input type="text" id="agenceReleveManuel" placeholder="Agence"></label>
+      </div>
+      
+      <div class="excel-releve-fields" style="display:none;">
+        <label>Compte demandé :
+          <select id="compteReleve"></select>
+        </label>
+      </div>
       
       <label>Période du relevé :</label>
       <div class="month-year-container">
@@ -326,9 +358,25 @@
     </div>
     
     <div class="credit-fields">
-      <label>Compte concerné :
-        <select id="compteCredit"></select>
-      </label>
+      <div class="mode-selection">
+        <label><strong>Mode de saisie :</strong></label>
+        <div class="mode-buttons">
+          <div class="mode-btn active" onclick="setCreditMode('manuel')">Saisie Manuelle</div>
+          <div class="mode-btn" onclick="setCreditMode('excel')">Sélection Excel</div>
+        </div>
+      </div>
+      
+      <div class="manuel-credit-fields">
+        <label>Compte concerné : <input type="text" id="compteCreditManuel" placeholder="Numéro de compte"></label>
+        <label>Banque du compte : <input type="text" id="banqueCreditManuel" placeholder="Nom de la banque"></label>
+        <label>Agence (optionnel) : <input type="text" id="agenceCreditManuel" placeholder="Agence"></label>
+      </div>
+      
+      <div class="excel-credit-fields" style="display:none;">
+        <label>Compte concerné :
+          <select id="compteCredit"></select>
+        </label>
+      </div>
       
       <label>Date de l'opération : <input type="date" id="dateOperationCredit"></label>
       
@@ -338,9 +386,25 @@
     </div>
     
     <div class="debit-fields">
-      <label>Compte concerné :
-        <select id="compteDebit"></select>
-      </label>
+      <div class="mode-selection">
+        <label><strong>Mode de saisie :</strong></label>
+        <div class="mode-buttons">
+          <div class="mode-btn active" onclick="setDebitMode('manuel')">Saisie Manuelle</div>
+          <div class="mode-btn" onclick="setDebitMode('excel')">Sélection Excel</div>
+        </div>
+      </div>
+      
+      <div class="manuel-debit-fields">
+        <label>Compte concerné : <input type="text" id="compteDebitManuel" placeholder="Numéro de compte"></label>
+        <label>Banque du compte : <input type="text" id="banqueDebitManuel" placeholder="Nom de la banque"></label>
+        <label>Agence (optionnel) : <input type="text" id="agenceDebitManuel" placeholder="Agence"></label>
+      </div>
+      
+      <div class="excel-debit-fields" style="display:none;">
+        <label>Compte concerné :
+          <select id="compteDebit"></select>
+        </label>
+      </div>
       
       <label>Date de l'opération : <input type="date" id="dateOperationDebit"></label>
       
@@ -368,6 +432,10 @@
 let refData = [];
 let ordonChoice, benifChoice, compteReleveChoice, compteMiseChoice, compteCreditChoice, compteDebitChoice;
 let virementMode = 'manuel'; // 'manuel' ou 'excel'
+let miseMode = 'manuel';
+let releveMode = 'manuel';
+let creditMode = 'manuel';
+let debitMode = 'manuel';
 
 // Fonction pour afficher/masquer le modèle Excel
 function toggleExcelTemplate() {
@@ -379,23 +447,91 @@ function toggleExcelTemplate() {
   }
 }
 
-// Fonction pour changer le mode de saisie virement
+// Fonctions pour changer le mode de saisie
 function setVirementMode(mode) {
   virementMode = mode;
   
   // Mettre à jour les boutons
-  document.querySelectorAll('.mode-btn').forEach(btn => {
+  document.querySelectorAll('.virement-fields .mode-btn').forEach(btn => {
     btn.classList.remove('active');
   });
   event.target.classList.add('active');
   
   // Afficher/masquer les champs appropriés
   if (mode === 'manuel') {
-    document.querySelector('.manuel-fields').style.display = 'block';
-    document.querySelector('.excel-fields').style.display = 'none';
+    document.querySelector('.virement-fields .manuel-fields').style.display = 'block';
+    document.querySelector('.virement-fields .excel-fields').style.display = 'none';
   } else {
-    document.querySelector('.manuel-fields').style.display = 'none';
-    document.querySelector('.excel-fields').style.display = 'block';
+    document.querySelector('.virement-fields .manuel-fields').style.display = 'none';
+    document.querySelector('.virement-fields .excel-fields').style.display = 'block';
+  }
+}
+
+function setMiseMode(mode) {
+  miseMode = mode;
+  
+  document.querySelectorAll('.mise-fields .mode-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  if (mode === 'manuel') {
+    document.querySelector('.manuel-mise-fields').style.display = 'block';
+    document.querySelector('.excel-mise-fields').style.display = 'none';
+  } else {
+    document.querySelector('.manuel-mise-fields').style.display = 'none';
+    document.querySelector('.excel-mise-fields').style.display = 'block';
+  }
+}
+
+function setReleveMode(mode) {
+  releveMode = mode;
+  
+  document.querySelectorAll('.releve-fields .mode-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  if (mode === 'manuel') {
+    document.querySelector('.manuel-releve-fields').style.display = 'block';
+    document.querySelector('.excel-releve-fields').style.display = 'none';
+  } else {
+    document.querySelector('.manuel-releve-fields').style.display = 'none';
+    document.querySelector('.excel-releve-fields').style.display = 'block';
+  }
+}
+
+function setCreditMode(mode) {
+  creditMode = mode;
+  
+  document.querySelectorAll('.credit-fields .mode-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  if (mode === 'manuel') {
+    document.querySelector('.manuel-credit-fields').style.display = 'block';
+    document.querySelector('.excel-credit-fields').style.display = 'none';
+  } else {
+    document.querySelector('.manuel-credit-fields').style.display = 'none';
+    document.querySelector('.excel-credit-fields').style.display = 'block';
+  }
+}
+
+function setDebitMode(mode) {
+  debitMode = mode;
+  
+  document.querySelectorAll('.debit-fields .mode-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  if (mode === 'manuel') {
+    document.querySelector('.manuel-debit-fields').style.display = 'block';
+    document.querySelector('.excel-debit-fields').style.display = 'none';
+  } else {
+    document.querySelector('.manuel-debit-fields').style.display = 'none';
+    document.querySelector('.excel-debit-fields').style.display = 'block';
   }
 }
 
@@ -528,12 +664,16 @@ document.getElementById("documentType").addEventListener("change", function() {
     setVirementMode('manuel');
   } else if (type === "mise") {
     document.querySelector(".mise-fields").style.display = "block";
+    setMiseMode('manuel');
   } else if (type === "releve") {
     document.querySelector(".releve-fields").style.display = "block";
+    setReleveMode('manuel');
   } else if (type === "credit") {
     document.querySelector(".credit-fields").style.display = "block";
+    setCreditMode('manuel');
   } else if (type === "debit") {
     document.querySelector(".debit-fields").style.display = "block";
+    setDebitMode('manuel');
   }
 });
 
@@ -572,11 +712,6 @@ function formatDate(dateString) {
 
 // Générer le document
 function generateDocument() {
-  if (refData.length === 0 && document.getElementById("documentType").value !== "virement") {
-    document.getElementById("documentOutput").innerHTML = "<div class='error'>Veuillez d'abord charger un fichier Excel de référence</div>";
-    return;
-  }
-
   const documentType = document.getElementById("documentType").value;
   const date = document.getElementById("date").value || "";
   const showHeader = document.getElementById("headerCheckbox").checked;
@@ -659,24 +794,36 @@ ${showHeader && footer ? `<div class="letter-footer">${footer}</div>` : ''}
 
 function generateMise() {
   const date = document.getElementById("date").value || "";
-  const compteSel = document.getElementById("compteMise").selectedOptions[0];
   const montantChiffre = parseInt(document.getElementById("montantMise").value) || 0;
   const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
   const nomBeneficiaire = document.getElementById("nomBeneficiaire").value || "";
   const cinBeneficiaire = document.getElementById("cinBeneficiaire").value || "";
   const showHeader = document.getElementById("headerCheckbox").checked;
 
-  const compteBanq = compteSel?.dataset.banq || "";
-  const compteAgence = compteSel?.dataset.agence || "";
-  const compteNum = compteSel?.value || "";
-  const compteName = compteSel?.dataset.name || "";
-  const compteFooter = compteSel?.dataset.footer || "";
+  let compteBanq, compteAgence, compteNum, compteFooter, emetteurName;
 
-  const emetteurName = compteName.split('-')[0];
+  if (miseMode === 'manuel') {
+    // Utiliser les valeurs manuelles
+    compteNum = document.getElementById("compteMiseManuel").value || "";
+    compteBanq = document.getElementById("banqueMiseManuel").value || "";
+    compteAgence = document.getElementById("agenceMiseManuel").value || "";
+    compteFooter = "";
+    emetteurName = "";
+  } else {
+    // Utiliser les valeurs Excel
+    const compteSel = document.getElementById("compteMise").selectedOptions[0];
+    compteBanq = compteSel?.dataset.banq || "";
+    compteAgence = compteSel?.dataset.agence || "";
+    compteNum = compteSel?.value || "";
+    const compteName = compteSel?.dataset.name || "";
+    compteFooter = compteSel?.dataset.footer || "";
+    emetteurName = compteName.split('-')[0];
+  }
+
   const adresseCompte = compteAgence ? `${compteBanq} Agence ${compteAgence}` : compteBanq;
 
   const template = `
-${showHeader ? `<div class="letter-header">${emetteurName}</div>` : ''}
+${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
 
 <div class="right"><b>Temara le ${formatDate(date)}</b></div>
 
@@ -690,7 +837,7 @@ Nous vous demandons de débiter notre compte N° <b>${compteNum}</b> de la somme
 
 <div class="signature"><b>Veuillez agréer, Monsieur le Directeur, l'expression de nos sentiments distingués.</b></div>
 
-${showHeader ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
+${showHeader && compteFooter ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
 `;
 
   document.getElementById("documentOutput").innerHTML = template;
@@ -698,18 +845,30 @@ ${showHeader ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
 
 function generateReleve() {
   const date = document.getElementById("date").value || "";
-  const compteSel = document.getElementById("compteReleve").selectedOptions[0];
   const mois = document.getElementById("moisReleve").value;
   const annee = document.getElementById("anneeReleve").value;
   const showHeader = document.getElementById("headerCheckbox").checked;
 
-  const compteBanq = compteSel?.dataset.banq || "";
-  const compteAgence = compteSel?.dataset.agence || "";
-  const compteNum = compteSel?.value || "";
-  const compteName = compteSel?.dataset.name || "";
-  const compteFooter = compteSel?.dataset.footer || "";
+  let compteBanq, compteAgence, compteNum, compteFooter, emetteurName;
 
-  const emetteurName = compteName.split('-')[0];
+  if (releveMode === 'manuel') {
+    // Utiliser les valeurs manuelles
+    compteNum = document.getElementById("compteReleveManuel").value || "";
+    compteBanq = document.getElementById("banqueReleveManuel").value || "";
+    compteAgence = document.getElementById("agenceReleveManuel").value || "";
+    compteFooter = "";
+    emetteurName = "";
+  } else {
+    // Utiliser les valeurs Excel
+    const compteSel = document.getElementById("compteReleve").selectedOptions[0];
+    compteBanq = compteSel?.dataset.banq || "";
+    compteAgence = compteSel?.dataset.agence || "";
+    compteNum = compteSel?.value || "";
+    const compteName = compteSel?.dataset.name || "";
+    compteFooter = compteSel?.dataset.footer || "";
+    emetteurName = compteName.split('-')[0];
+  }
+
   const adresseCompte = compteAgence ? `${compteBanq} Agence ${compteAgence}` : compteBanq;
 
   const nomsMois = {
@@ -719,7 +878,7 @@ function generateReleve() {
   };
 
   const template = `
-${showHeader ? `<div class="letter-header">${emetteurName}</div>` : ''}
+${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
 
 <div class="right"><b>Temara le ${formatDate(date)}</b></div>
 
@@ -733,7 +892,109 @@ Nous vous prions de bien vouloir nous établir le relevé de notre compte N° <b
 
 <div class="signature"><b>Veuillez agréer, Monsieur le Directeur, l'expression de nos sentiments distingués.</b></div>
 
-${showHeader ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
+${showHeader && compteFooter ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
+`;
+
+  document.getElementById("documentOutput").innerHTML = template;
+}
+
+function generateCredit() {
+  const date = document.getElementById("date").value || "";
+  const dateOperation = document.getElementById("dateOperationCredit").value || "";
+  const montantChiffre = parseInt(document.getElementById("montantCredit").value) || 0;
+  const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
+  const libelle = document.getElementById("libelleCredit").value || "";
+  const showHeader = document.getElementById("headerCheckbox").checked;
+
+  let compteBanq, compteAgence, compteNum, compteFooter, emetteurName;
+
+  if (creditMode === 'manuel') {
+    // Utiliser les valeurs manuelles
+    compteNum = document.getElementById("compteCreditManuel").value || "";
+    compteBanq = document.getElementById("banqueCreditManuel").value || "";
+    compteAgence = document.getElementById("agenceCreditManuel").value || "";
+    compteFooter = "";
+    emetteurName = "";
+  } else {
+    // Utiliser les valeurs Excel
+    const compteSel = document.getElementById("compteCredit").selectedOptions[0];
+    compteBanq = compteSel?.dataset.banq || "";
+    compteAgence = compteSel?.dataset.agence || "";
+    compteNum = compteSel?.value || "";
+    const compteName = compteSel?.dataset.name || "";
+    compteFooter = compteSel?.dataset.footer || "";
+    emetteurName = compteName.split('-')[0];
+  }
+
+  const adresseCompte = compteAgence ? `${compteBanq} Agence ${compteAgence}` : compteBanq;
+
+  const template = `
+${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
+
+<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+
+<div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
+
+<div class="left">OBJET : Demande d'avis de crédit</div>
+
+Monsieur,
+
+Nous vous prions de bien vouloir nous créditer notre compte N° <b>${compteNum}</b> de la somme de <b>${montantChiffre} Dhs</b> (<b>${montantLettre}</b>) pour la raison suivante : <b>${libelle}</b>.
+
+<div class="signature"><b>Veuillez agréer, Monsieur le Directeur, l'expression de nos sentiments distingués.</b></div>
+
+${showHeader && compteFooter ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
+`;
+
+  document.getElementById("documentOutput").innerHTML = template;
+}
+
+function generateDebit() {
+  const date = document.getElementById("date").value || "";
+  const dateOperation = document.getElementById("dateOperationDebit").value || "";
+  const montantChiffre = parseInt(document.getElementById("montantDebit").value) || 0;
+  const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
+  const libelle = document.getElementById("libelleDebit").value || "";
+  const showHeader = document.getElementById("headerCheckbox").checked;
+
+  let compteBanq, compteAgence, compteNum, compteFooter, emetteurName;
+
+  if (debitMode === 'manuel') {
+    // Utiliser les valeurs manuelles
+    compteNum = document.getElementById("compteDebitManuel").value || "";
+    compteBanq = document.getElementById("banqueDebitManuel").value || "";
+    compteAgence = document.getElementById("agenceDebitManuel").value || "";
+    compteFooter = "";
+    emetteurName = "";
+  } else {
+    // Utiliser les valeurs Excel
+    const compteSel = document.getElementById("compteDebit").selectedOptions[0];
+    compteBanq = compteSel?.dataset.banq || "";
+    compteAgence = compteSel?.dataset.agence || "";
+    compteNum = compteSel?.value || "";
+    const compteName = compteSel?.dataset.name || "";
+    compteFooter = compteSel?.dataset.footer || "";
+    emetteurName = compteName.split('-')[0];
+  }
+
+  const adresseCompte = compteAgence ? `${compteBanq} Agence ${compteAgence}` : compteBanq;
+
+  const template = `
+${showHeader && emetteurName ? `<div class="letter-header">${emetteurName}</div>` : ''}
+
+<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+
+<div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
+
+<div class="left">OBJET : Demande d'avis de débit</div>
+
+Monsieur,
+
+Nous vous prions de bien vouloir débiter notre compte N° <b>${compteNum}</b> de la somme de <b>${montantChiffre} Dhs</b> (<b>${montantLettre}</b>) pour la raison suivante : <b>${libelle}</b>.
+
+<div class="signature"><b>Veuillez agréer, Monsieur le Directeur, l'expression de nos sentiments distingués.</b></div>
+
+${showHeader && compteFooter ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
 `;
 
   document.getElementById("documentOutput").innerHTML = template;
