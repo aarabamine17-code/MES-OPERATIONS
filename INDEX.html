@@ -80,7 +80,7 @@
   .no-print { margin-bottom:15px; }
   .document-type { margin-bottom:15px; }
   .document-type select { width:auto; padding:8px; font-size:16px; font-weight:bold; }
-  .virement-fields, .releve-fields, .mise-fields, .credit-fields, .debit-fields, .multi-releve-fields { display:none; }
+  .virement-fields, .releve-fields, .mise-fields, .credit-fields, .debit-fields { display:none; }
   .upload-section { margin:20px 0; padding:15px; background:#f0f0f0; border-radius:5px; }
   .file-input { margin:10px 0; }
   .status-message { margin:10px 0; padding:10px; border-radius:3px; }
@@ -240,7 +240,6 @@
           <option value="virement">Ordre de Virement</option>
           <option value="mise">Mise à disposition</option>
           <option value="releve">Demande de Relevé de Compte</option>
-          <option value="multi-releve">Demandes de Relevé Multiples</option>
           <option value="credit">Demande avis de crédit</option>
           <option value="debit">Demande avis de débit</option>
         </select>
@@ -286,7 +285,6 @@
       </div>
     </div>
     
-    <!-- Les autres sections (mise, releve, etc.) restent inchangées -->
     <div class="mise-fields">
       <label>Compte à débiter :
         <select id="compteMise"></select>
@@ -324,38 +322,6 @@
         <select id="anneeReleve">
           <!-- Les années seront générées dynamiquement -->
         </select>
-      </div>
-    </div>
-    
-    <div class="multi-releve-fields">
-      <label>Comptes demandés :
-        <select id="comptesMultiReleve" multiple></select>
-      </label>
-      
-      <label>Période du relevé :</label>
-      <div class="month-year-container">
-        <select id="moisMultiReleve">
-          <option value="01">Janvier</option>
-          <option value="02">Février</option>
-          <option value="03">Mars</option>
-          <option value="04">Avril</option>
-          <option value="05">Mai</option>
-          <option value="06">Juin</option>
-          <option value="07">Juillet</option>
-          <option value="08">Août</option>
-          <option value="09">Septembre</option>
-          <option value="10">Octobre</option>
-          <option value="11">Novembre</option>
-          <option value="12">Décembre</option>
-        </select>
-        
-        <select id="anneeMultiReleve">
-          <!-- Les années seront générées dynamiquement -->
-        </select>
-      </div>
-      
-      <div class="checkbox-container">
-        <label><input type="checkbox" id="grouperParBanque" checked> Grouper les demandes par banque</label>
       </div>
     </div>
     
@@ -400,7 +366,7 @@
 <script>
 // Variables globales
 let refData = [];
-let ordonChoice, benifChoice, compteReleveChoice, compteMiseChoice, compteCreditChoice, compteDebitChoice, comptesMultiReleveChoice;
+let ordonChoice, benifChoice, compteReleveChoice, compteMiseChoice, compteCreditChoice, compteDebitChoice;
 let virementMode = 'manuel'; // 'manuel' ou 'excel'
 
 // Fonction pour afficher/masquer le modèle Excel
@@ -436,7 +402,6 @@ function setVirementMode(mode) {
 // Initialisation des années pour le relevé
 function initAnnees() {
   const anneeSelect = document.getElementById('anneeReleve');
-  const anneeMultiSelect = document.getElementById('anneeMultiReleve');
   const anneeActuelle = new Date().getFullYear();
   
   // Ajouter 5 années (2 avant, année actuelle, 2 après)
@@ -446,12 +411,6 @@ function initAnnees() {
     option.textContent = i;
     if (i === anneeActuelle) option.selected = true;
     anneeSelect.appendChild(option);
-    
-    const optionMulti = document.createElement('option');
-    optionMulti.value = i;
-    optionMulti.textContent = i;
-    if (i === anneeActuelle) optionMulti.selected = true;
-    anneeMultiSelect.appendChild(optionMulti);
   }
 }
 
@@ -476,7 +435,6 @@ function initSelects() {
   document.getElementById("compteMise").innerHTML = renderOptions(refData, "ordon");
   document.getElementById("compteCredit").innerHTML = renderOptions(refData, "ordon");
   document.getElementById("compteDebit").innerHTML = renderOptions(refData, "ordon");
-  document.getElementById("comptesMultiReleve").innerHTML = renderOptions(refData, "ordon");
   
   // Réinitialiser Choices.js
   if (ordonChoice) ordonChoice.destroy();
@@ -485,7 +443,6 @@ function initSelects() {
   if (compteMiseChoice) compteMiseChoice.destroy();
   if (compteCreditChoice) compteCreditChoice.destroy();
   if (compteDebitChoice) compteDebitChoice.destroy();
-  if (comptesMultiReleveChoice) comptesMultiReleveChoice.destroy();
   
   ordonChoice = new Choices("#ordon", { searchPlaceholderValue: "Rechercher un compte..." });
   benifChoice = new Choices("#benif", { searchPlaceholderValue: "Rechercher un compte..." });
@@ -493,11 +450,6 @@ function initSelects() {
   compteMiseChoice = new Choices("#compteMise", { searchPlaceholderValue: "Rechercher un compte..." });
   compteCreditChoice = new Choices("#compteCredit", { searchPlaceholderValue: "Rechercher un compte..." });
   compteDebitChoice = new Choices("#compteDebit", { searchPlaceholderValue: "Rechercher un compte..." });
-  comptesMultiReleveChoice = new Choices("#comptesMultiReleve", { 
-    searchPlaceholderValue: "Rechercher des comptes...",
-    removeItemButton: true,
-    maxItemCount: -1
-  });
 }
 
 // Charger le fichier Excel
@@ -566,7 +518,6 @@ document.getElementById("documentType").addEventListener("change", function() {
   document.querySelector(".virement-fields").style.display = "none";
   document.querySelector(".mise-fields").style.display = "none";
   document.querySelector(".releve-fields").style.display = "none";
-  document.querySelector(".multi-releve-fields").style.display = "none";
   document.querySelector(".credit-fields").style.display = "none";
   document.querySelector(".debit-fields").style.display = "none";
   
@@ -579,8 +530,6 @@ document.getElementById("documentType").addEventListener("change", function() {
     document.querySelector(".mise-fields").style.display = "block";
   } else if (type === "releve") {
     document.querySelector(".releve-fields").style.display = "block";
-  } else if (type === "multi-releve") {
-    document.querySelector(".multi-releve-fields").style.display = "block";
   } else if (type === "credit") {
     document.querySelector(".credit-fields").style.display = "block";
   } else if (type === "debit") {
@@ -638,8 +587,6 @@ function generateDocument() {
     generateMise();
   } else if (documentType === "releve") {
     generateReleve();
-  } else if (documentType === "multi-releve") {
-    generateMultiReleve();
   } else if (documentType === "credit") {
     generateCredit();
   } else if (documentType === "debit") {
@@ -710,7 +657,6 @@ ${showHeader && footer ? `<div class="letter-footer">${footer}</div>` : ''}
   document.getElementById("documentOutput").innerHTML = template;
 }
 
-// Les autres fonctions generateMise(), generateReleve(), etc. restent inchangées...
 function generateMise() {
   const date = document.getElementById("date").value || "";
   const compteSel = document.getElementById("compteMise").selectedOptions[0];
