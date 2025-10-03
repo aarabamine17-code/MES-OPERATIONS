@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Générateur de Documents</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+<style>
+  body { font-family:"Times New Roman", serif; margin:0; padding:20mm; background:#f7f7f7; }
+  .app { max-width:210mm; margin:auto; background:white; padding:25mm; box-shadow:0 0 10px rgba(0,0,0,0.1); position:relative; min-height:297mm; }
+  .controls { margin-bottom:20px; }
+  label { display:block; margin-top:10px; font-size:15px; }
+  select, input, textarea { width:100%; padding:6px; font-size:15px; margin-top:4px; }
+  button { 
+    margin-top:15px; 
+    padding:12px 24px; 
+    font-size:15px; 
+    cursor:pointer; 
+    margin-right:10px; 
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .btn-primary {
+    background: #2c3e50;
+    color: white;
+  }
+  .btn-primary:hover {
+    background: #34495e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .btn-secondary {
+    background: #7f8c8d;
+    color: white;
+  }
+  .btn-secondary:hover {
+    background: #95a5a6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .btn-info {
+    background: #3498db;
+    color: white;
+  }
+  .btn-info:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .letter { font-size:15px; line-height:1.8; text-align:justify; white-space:pre-line; position:relative; z-index:1; }
+  .right { text-align:right; margin-bottom:20px; }
+  .left { text-align:left; margin:15px 0; font-weight:bold; }
+  .center { text-align:center; margin:15px 0; }
+  .signature { text-align:center; margin-top:40px; }
+  .letter-header { 
+    position:absolute; 
+    top:10mm; 
+    left:25mm; 
+    font-weight:bold; 
+    font-size:20px;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  .letter-footer {
+    position:absolute;
+    bottom:10mm;
+    left:25mm;
+    right:25mm;
+    font-size:12px;
+    text-align:center;
+    white-space: pre-line;
+    line-height:1.4;
+    z-index: 2;
+  }
+  .checkbox-container { margin:15px 0; }
+  .checkbox-container input { width:auto; margin-right:8px; }
+  b { font-weight:bold; }
+  .no-print { margin-bottom:15px; }
+  .document-type { margin-bottom:15px; }
+  .document-type select { width:auto; padding:8px; font-size:16px; font-weight:bold; }
+  .virement-fields, .releve-fields, .mise-fields, .credit-fields, .debit-fields, .multi-releve-fields { display:none; }
+  .upload-section { margin:20px 0; padding:15px; background:#f0f0f0; border-radius:5px; }
+  .file-input { margin:10px 0; }
+  .status-message { margin:10px 0; padding:10px; border-radius:3px; }
+  .success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+  .error { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+  .info { background:#d1ecf1; color:#0c5460; border:1px solid #bee5eb; }
+  .month-year-container { display:flex; gap:10px; }
+  .month-year-container select { flex:1; }
+  .table-container { margin:20px 0; }
+  table { width:100%; border-collapse: collapse; margin:10px 0; }
+  th, td { border:1px solid #ddd; padding:8px; text-align:left; }
+  th { background-color:#f2f2f2; font-weight:bold; }
+  .banque-section { margin-bottom:30px; page-break-inside: avoid; }
+  .banque-title { background:#ecf0f1; padding:10px; font-weight:bold; margin-bottom:10px; }
+  .mode-selection { margin:15px 0; padding:10px; background:#f8f9fa; border-radius:5px; }
+  .mode-buttons { display:flex; gap:10px; margin:10px 0; }
+  .mode-btn { 
+    flex:1; 
+    padding:10px; 
+    border:2px solid #2c3e50; 
+    background:white; 
+    color:#2c3e50; 
+    border-radius:5px; 
+    cursor:pointer;
+    text-align:center;
+    font-weight:600;
+    transition: all 0.3s ease;
+  }
+  .mode-btn.active {
+    background:#2c3e50;
+    color:white;
+  }
+  .manuel-fields, .excel-fields { display:none; }
+  .excel-template { 
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    border-left: 4px solid #3498db;
+  }
+  .template-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+  .template-table th {
+    background: #3498db;
+    color: white;
+    padding: 10px;
+    text-align: center;
+  }
+  .template-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background: white;
+  }
+  .template-example {
+    background: #e8f4fc !important;
+    font-style: italic;
+    color: #2c3e50;
+  }
+  @media print {
+    .no-print { display:none; }
+    body { background:white; padding:0; margin:0; }
+    .app { box-shadow:none; padding:25mm; margin:0; width:100%; height:100%; position:relative; }
+    .letter-header { 
+      position:fixed; 
+      top:10mm; 
+      left:25mm; 
+      right:25mm;
+      font-weight:bold; 
+      font-size:20px;
+      text-transform: uppercase;
+    }
+    .letter-footer {
+      position:fixed;
+      bottom:10mm;
+      left:25mm;
+      right:25mm;
+      font-size:12px;
+      text-align:center;
+      white-space: pre-line;
+      line-height:1.4;
+    }
+    .banque-section { page-break-inside: avoid; }
+    .letter { margin-top: 20mm; margin-bottom: 20mm; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="no-print controls">
+    <div class="upload-section">
+      <h3>Charger le fichier Excel de référence</h3>
+      <input type="file" id="excelFile" class="file-input" accept=".xlsx, .xls">
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button onclick="loadExcelFile()" class="btn-primary">Charger les données</button>
+        <button onclick="toggleExcelTemplate()" class="btn-info">Voir le modèle Excel</button>
+      </div>
+      <div id="uploadStatus" class="status-message"></div>
+      
+      <!-- Section cachée avec le modèle Excel -->
+      <div id="excelTemplate" class="excel-template">
+        <h4>📊 Modèle de fichier Excel requis :</h4>
+        <p><strong>Structure des colonnes :</strong></p>
+        
+        <table class="template-table">
+          <thead>
+            <tr>
+              <th>Ordonneur</th>
+              <th>BANQUE</th>
+              <th>AGENCE</th>
+              <th>Compte</th>
+              <th>NOM</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="template-example">SOCIETE A - COMPTE COURANT</td>
+              <td class="template-example">BANK OF AFRICA</td>
+              <td class="template-example">Temara</td>
+              <td class="template-example">12345678901</td>
+              <td class="template-example">FOURNISSEUR A</td>
+              <td class="template-example">SOCIETE A - Capital 100.000 DH - RC 12345</td>
+            </tr>
+            <tr>
+              <td>Nom de l'émetteur</td>
+              <td>Nom de la banque</td>
+              <td>Agence (optionnel)</td>
+              <td>Numéro de compte</td>
+              <td>Nom du bénéficiaire</td>
+              <td>Pied de page (optionnel)</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div style="margin-top: 15px;">
+          <p><strong>💡 Conseils :</strong></p>
+          <ul style="margin: 10px 0; padding-left: 20px;">
+            <li>Les colonnes <strong>Ordonneur, BANQUE, Compte, NOM</strong> sont obligatoires</li>
+            <li>Utilisez le format : <code>NOM_SOCIETE - TYPE_COMPTE</code> pour l'ordonneur</li>
+            <li>Les fichiers <strong>.xlsx</strong> et <strong>.xls</strong> sont acceptés</li>
+            <li>Évitez les cellules vides dans les colonnes obligatoires</li>
+          </ul>
+        </div>
+        
+        <button onclick="toggleExcelTemplate()" class="btn-secondary" style="margin-top: 10px;">Fermer</button>
+      </div>
+    </div>
+    
+    <div class="document-type">
+      <label>Type de document :
+        <select id="documentType">
+          <option value="virement">Ordre de Virement</option>
+          <option value="mise">Mise à disposition</option>
+          <option value="releve">Demande de Relevé de Compte</option>
+          <option value="multi-releve">Demandes de Relevé Multiples</option>
+          <option value="credit">Demande avis de crédit</option>
+          <option value="debit">Demande avis de débit</option>
+        </select>
+      </label>
+    </div>
+    
+    <label>Date : <input type="date" id="date"></label>
+    
+    <div class="virement-fields">
+      <div class="mode-selection">
+        <label><strong>Mode de saisie :</strong></label>
+        <div class="mode-buttons">
+          <div class="mode-btn active" onclick="setVirementMode('manuel')">Saisie Manuelle</div>
+          <div class="mode-btn" onclick="setVirementMode('excel')">Sélection Excel</div>
+        </div>
+      </div>
+      
+      <div class="manuel-fields">
+        <label>Nom de l'émetteur : <input type="text" id="emetteurManuel" placeholder="Nom de votre société"></label>
+        <label>Compte émetteur : <input type="text" id="compteEmetteurManuel" placeholder="Numéro de compte"></label>
+        <label>Banque émetteur : <input type="text" id="banqueEmetteurManuel" placeholder="Nom de la banque"></label>
+        <label>Nom du bénéficiaire : <input type="text" id="beneficiaireManuel" placeholder="Nom du bénéficiaire"></label>
+        <label>Compte bénéficiaire : <input type="text" id="compteBeneficiaireManuel" placeholder="Numéro de compte bénéficiaire"></label>
+        <label>Banque bénéficiaire : <input type="text" id="banqueBeneficiaireManuel" placeholder="Banque du bénéficiaire"></label>
+      </div>
+      
+      <div class="excel-fields">
+        <label>Ordonneur (Compte) :
+          <select id="ordon"></select>
+        </label>
+        
+        <label>Bénéficiaire (Compte) :
+          <select id="benif"></select>
+        </label>
+      </div>
+      
+      <label>Montant en chiffres (Dhs) : <input type="number" id="montantChiffre"></label>
+      
+      <label>Motif du virement (optionnel) : <textarea id="motifVirement" placeholder="Raison du virement... (laisser vide pour ne pas afficher)"></textarea></label>
+      
+      <div class="checkbox-container">
+        <label><input type="checkbox" id="srbm"> SRBM</label>
+      </div>
+    </div>
+    
+    <!-- Les autres sections (mise, releve, etc.) restent inchangées -->
+    <div class="mise-fields">
+      <label>Compte à débiter :
+        <select id="compteMise"></select>
+      </label>
+      
+      <label>Montant en chiffres (Dhs) : <input type="number" id="montantMise"></label>
+      
+      <label>Nom du bénéficiaire : <input type="text" id="nomBeneficiaire" placeholder="Ex: AMINE AARAB"></label>
+      
+      <label>Numéro de CIN : <input type="text" id="cinBeneficiaire" placeholder="Ex: AB123456"></label>
+    </div>
+    
+    <div class="releve-fields">
+      <label>Compte demandé :
+        <select id="compteReleve"></select>
+      </label>
+      
+      <label>Période du relevé :</label>
+      <div class="month-year-container">
+        <select id="moisReleve">
+          <option value="01">Janvier</option>
+          <option value="02">Février</option>
+          <option value="03">Mars</option>
+          <option value="04">Avril</option>
+          <option value="05">Mai</option>
+          <option value="06">Juin</option>
+          <option value="07">Juillet</option>
+          <option value="08">Août</option>
+          <option value="09">Septembre</option>
+          <option value="10">Octobre</option>
+          <option value="11">Novembre</option>
+          <option value="12">Décembre</option>
+        </select>
+        
+        <select id="anneeReleve">
+          <!-- Les années seront générées dynamiquement -->
+        </select>
+      </div>
+    </div>
+    
+    <div class="multi-releve-fields">
+      <label>Comptes demandés :
+        <select id="comptesMultiReleve" multiple></select>
+      </label>
+      
+      <label>Période du relevé :</label>
+      <div class="month-year-container">
+        <select id="moisMultiReleve">
+          <option value="01">Janvier</option>
+          <option value="02">Février</option>
+          <option value="03">Mars</option>
+          <option value="04">Avril</option>
+          <option value="05">Mai</option>
+          <option value="06">Juin</option>
+          <option value="07">Juillet</option>
+          <option value="08">Août</option>
+          <option value="09">Septembre</option>
+          <option value="10">Octobre</option>
+          <option value="11">Novembre</option>
+          <option value="12">Décembre</option>
+        </select>
+        
+        <select id="anneeMultiReleve">
+          <!-- Les années seront générées dynamiquement -->
+        </select>
+      </div>
+      
+      <div class="checkbox-container">
+        <label><input type="checkbox" id="grouperParBanque" checked> Grouper les demandes par banque</label>
+      </div>
+    </div>
+    
+    <div class="credit-fields">
+      <label>Compte concerné :
+        <select id="compteCredit"></select>
+      </label>
+      
+      <label>Date de l'opération : <input type="date" id="dateOperationCredit"></label>
+      
+      <label>Montant en chiffres (Dhs) : <input type="number" id="montantCredit"></label>
+      
+      <label>Libellé de l'opération : <textarea id="libelleCredit" placeholder="Décrire l'opération de crédit..."></textarea></label>
+    </div>
+    
+    <div class="debit-fields">
+      <label>Compte concerné :
+        <select id="compteDebit"></select>
+      </label>
+      
+      <label>Date de l'opération : <input type="date" id="dateOperationDebit"></label>
+      
+      <label>Montant en chiffres (Dhs) : <input type="number" id="montantDebit"></label>
+      
+      <label>Libellé de l'opération : <textarea id="libelleDebit" placeholder="Décrire l'opération de débit..."></textarea></label>
+    </div>
+    
+    <div class="checkbox-container">
+      <label><input type="checkbox" id="headerCheckbox"> Ajouter l'en-tête et pied de page de société</label>
+    </div>
+    
+    <button onclick="generateDocument()" class="btn-primary">Générer</button>
+    <button onclick="window.print()" class="btn-secondary">Imprimer</button>
+  </div>
+
+  <div class="letter" id="documentOutput"></div>
+</div>
+
+<!-- Inclure SheetJS pour lire les fichiers Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script>
+// Variables globales
+let refData = [];
+let ordonChoice, benifChoice, compteReleveChoice, compteMiseChoice, compteCreditChoice, compteDebitChoice, comptesMultiReleveChoice;
+let virementMode = 'manuel'; // 'manuel' ou 'excel'
+
+// Fonction pour afficher/masquer le modèle Excel
+function toggleExcelTemplate() {
+  const template = document.getElementById('excelTemplate');
+  if (template.style.display === 'none' || template.style.display === '') {
+    template.style.display = 'block';
+  } else {
+    template.style.display = 'none';
+  }
+}
+
+// Fonction pour changer le mode de saisie virement
+function setVirementMode(mode) {
+  virementMode = mode;
+  
+  // Mettre à jour les boutons
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  // Afficher/masquer les champs appropriés
+  if (mode === 'manuel') {
+    document.querySelector('.manuel-fields').style.display = 'block';
+    document.querySelector('.excel-fields').style.display = 'none';
+  } else {
+    document.querySelector('.manuel-fields').style.display = 'none';
+    document.querySelector('.excel-fields').style.display = 'block';
+  }
+}
+
+// Initialisation des années pour le relevé
+function initAnnees() {
+  const anneeSelect = document.getElementById('anneeReleve');
+  const anneeMultiSelect = document.getElementById('anneeMultiReleve');
+  const anneeActuelle = new Date().getFullYear();
+  
+  // Ajouter 5 années (2 avant, année actuelle, 2 après)
+  for (let i = anneeActuelle - 2; i <= anneeActuelle + 2; i++) {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = i;
+    if (i === anneeActuelle) option.selected = true;
+    anneeSelect.appendChild(option);
+    
+    const optionMulti = document.createElement('option');
+    optionMulti.value = i;
+    optionMulti.textContent = i;
+    if (i === anneeActuelle) optionMulti.selected = true;
+    anneeMultiSelect.appendChild(optionMulti);
+  }
+}
+
+// Génération des options HTML
+function renderOptions(data, type = "ordon") {
+  if (!data || data.length === 0) {
+    return '<option value="">Aucune donnée chargée</option>';
+  }
+  
+  return data.map(r =>
+    `<option value="${r.compte}" data-banq="${r.banque}" data-agence="${r.agence || ''}" data-name="${type === "ordon" ? r.ordon : r.benif}" data-footer="${r.footer || ''}">
+      ${type === "ordon" ? r.ordon : r.benif} — ${r.compte} (${r.banque})
+    </option>`
+  ).join("");
+}
+
+// Initialiser les sélecteurs
+function initSelects() {
+  document.getElementById("ordon").innerHTML = renderOptions(refData, "ordon");
+  document.getElementById("benif").innerHTML = renderOptions(refData, "benif");
+  document.getElementById("compteReleve").innerHTML = renderOptions(refData, "ordon");
+  document.getElementById("compteMise").innerHTML = renderOptions(refData, "ordon");
+  document.getElementById("compteCredit").innerHTML = renderOptions(refData, "ordon");
+  document.getElementById("compteDebit").innerHTML = renderOptions(refData, "ordon");
+  document.getElementById("comptesMultiReleve").innerHTML = renderOptions(refData, "ordon");
+  
+  // Réinitialiser Choices.js
+  if (ordonChoice) ordonChoice.destroy();
+  if (benifChoice) benifChoice.destroy();
+  if (compteReleveChoice) compteReleveChoice.destroy();
+  if (compteMiseChoice) compteMiseChoice.destroy();
+  if (compteCreditChoice) compteCreditChoice.destroy();
+  if (compteDebitChoice) compteDebitChoice.destroy();
+  if (comptesMultiReleveChoice) comptesMultiReleveChoice.destroy();
+  
+  ordonChoice = new Choices("#ordon", { searchPlaceholderValue: "Rechercher un compte..." });
+  benifChoice = new Choices("#benif", { searchPlaceholderValue: "Rechercher un compte..." });
+  compteReleveChoice = new Choices("#compteReleve", { searchPlaceholderValue: "Rechercher un compte..." });
+  compteMiseChoice = new Choices("#compteMise", { searchPlaceholderValue: "Rechercher un compte..." });
+  compteCreditChoice = new Choices("#compteCredit", { searchPlaceholderValue: "Rechercher un compte..." });
+  compteDebitChoice = new Choices("#compteDebit", { searchPlaceholderValue: "Rechercher un compte..." });
+  comptesMultiReleveChoice = new Choices("#comptesMultiReleve", { 
+    searchPlaceholderValue: "Rechercher des comptes...",
+    removeItemButton: true,
+    maxItemCount: -1
+  });
+}
+
+// Charger le fichier Excel
+function loadExcelFile() {
+  const fileInput = document.getElementById('excelFile');
+  const statusDiv = document.getElementById('uploadStatus');
+  
+  if (!fileInput.files.length) {
+    statusDiv.innerHTML = '<div class="error">Veuillez sélectionner un fichier Excel. <a href="javascript:void(0)" onclick="toggleExcelTemplate()" style="color: #721c24; text-decoration: underline;">Voir le modèle requis</a></div>';
+    return;
+  }
+  
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      
+      // Supposer que la première feuille contient les données
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      
+      // Convertir en JSON
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      
+      // Transformer les données au format attendu
+      refData = jsonData.map(row => {
+        return {
+          ordon: row.Ordonneur || '',
+          banque: row.BANQUE || '',
+          agence: row.AGENCE || '',
+          compte: row.Compte || '',
+          benif: row.NOM || '',
+          footer: row.F || ''
+        };
+      });
+      
+      // Filtrer les entrées vides
+      refData = refData.filter(item => item.ordon && item.compte);
+      
+      // Mettre à jour les sélecteurs
+      initSelects();
+      
+      statusDiv.innerHTML = `<div class="success">✅ ${refData.length} comptes chargés avec succès</div>`;
+      
+    } catch (error) {
+      console.error('Erreur lors du chargement du fichier:', error);
+      statusDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}. <a href="javascript:void(0)" onclick="toggleExcelTemplate()" style="color: #721c24; text-decoration: underline;">Vérifier le modèle Excel</a></div>`;
+    }
+  };
+  
+  reader.onerror = function() {
+    statusDiv.innerHTML = '<div class="error">❌ Erreur lors de la lecture du fichier. <a href="javascript:void(0)" onclick="toggleExcelTemplate()" style="color: #721c24; text-decoration: underline;">Voir le modèle requis</a></div>';
+  };
+  
+  reader.readAsArrayBuffer(file);
+}
+
+// Gestion du changement de type de document
+document.getElementById("documentType").addEventListener("change", function() {
+  const type = this.value;
+  
+  // Masquer tous les champs
+  document.querySelector(".virement-fields").style.display = "none";
+  document.querySelector(".mise-fields").style.display = "none";
+  document.querySelector(".releve-fields").style.display = "none";
+  document.querySelector(".multi-releve-fields").style.display = "none";
+  document.querySelector(".credit-fields").style.display = "none";
+  document.querySelector(".debit-fields").style.display = "none";
+  
+  // Afficher les champs correspondants
+  if (type === "virement") {
+    document.querySelector(".virement-fields").style.display = "block";
+    // Afficher le mode par défaut (manuel)
+    setVirementMode('manuel');
+  } else if (type === "mise") {
+    document.querySelector(".mise-fields").style.display = "block";
+  } else if (type === "releve") {
+    document.querySelector(".releve-fields").style.display = "block";
+  } else if (type === "multi-releve") {
+    document.querySelector(".multi-releve-fields").style.display = "block";
+  } else if (type === "credit") {
+    document.querySelector(".credit-fields").style.display = "block";
+  } else if (type === "debit") {
+    document.querySelector(".debit-fields").style.display = "block";
+  }
+});
+
+// Conversion nombre → lettres simplifiée
+function numberToWords(n) {
+  const unite = ["zéro","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix",
+    "onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"];
+  const dizaines = ["","","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];
+
+  if (n < 20) return unite[n];
+  if (n < 100) {
+    let d = Math.floor(n/10), r = n%10;
+    if (d===7 || d===9) return dizaines[d] + (r>0 ? "-" + unite[10+r] : "");
+    return dizaines[d] + (r>0 ? "-" + unite[r] : "");
+  }
+  if (n < 1000) {
+    let c = Math.floor(n/100), r = n%100;
+    return (c>1?unite[c]+" ":"") + "cent" + (r>0?" "+numberToWords(r):"");
+  }
+  if (n < 1000000) {
+    let m = Math.floor(n/1000), r = n%1000;
+    return (m>1?numberToWords(m)+" ":"") + "mille" + (r>0?" "+numberToWords(r):"");
+  }
+  return n.toString();
+}
+
+// Fonction pour formater une date au format français (jj/mm/aaaa)
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+// Générer le document
+function generateDocument() {
+  if (refData.length === 0 && document.getElementById("documentType").value !== "virement") {
+    document.getElementById("documentOutput").innerHTML = "<div class='error'>Veuillez d'abord charger un fichier Excel de référence</div>";
+    return;
+  }
+
+  const documentType = document.getElementById("documentType").value;
+  const date = document.getElementById("date").value || "";
+  const showHeader = document.getElementById("headerCheckbox").checked;
+
+  if (documentType === "virement") {
+    generateVirement();
+  } else if (documentType === "mise") {
+    generateMise();
+  } else if (documentType === "releve") {
+    generateReleve();
+  } else if (documentType === "multi-releve") {
+    generateMultiReleve();
+  } else if (documentType === "credit") {
+    generateCredit();
+  } else if (documentType === "debit") {
+    generateDebit();
+  }
+}
+
+// Générer l'ordre de virement
+function generateVirement() {
+  const date = document.getElementById("date").value || "";
+  const montantChiffre = parseInt(document.getElementById("montantChiffre").value) || 0;
+  const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
+  const isSRBM = document.getElementById("srbm").checked;
+  const showHeader = document.getElementById("headerCheckbox").checked;
+  const motif = document.getElementById("motifVirement").value || "";
+
+  let ordonName, ordonCompte, ordonBanq, benifName, benifCompte, benifBanq, footer;
+
+  if (virementMode === 'manuel') {
+    // Utiliser les valeurs manuelles
+    ordonName = document.getElementById("emetteurManuel").value || "";
+    ordonCompte = document.getElementById("compteEmetteurManuel").value || "";
+    ordonBanq = document.getElementById("banqueEmetteurManuel").value || "";
+    benifName = document.getElementById("beneficiaireManuel").value || "";
+    benifCompte = document.getElementById("compteBeneficiaireManuel").value || "";
+    benifBanq = document.getElementById("banqueBeneficiaireManuel").value || "";
+    footer = ""; // Pas de footer en mode manuel
+  } else {
+    // Utiliser les valeurs Excel
+    const ordonSel = document.getElementById("ordon").selectedOptions[0];
+    const benifSel = document.getElementById("benif").selectedOptions[0];
+    
+    ordonBanq = ordonSel?.dataset.banq || "";
+    const ordonAgence = ordonSel?.dataset.agence || "";
+    ordonCompte = ordonSel?.value || "";
+    ordonName = ordonSel?.dataset.name || "";
+    benifName = benifSel?.dataset.name || "";
+    benifBanq = benifSel?.dataset.banq || "";
+    benifCompte = benifSel?.value || "";
+    footer = ordonSel?.dataset.footer || "";
+
+    // Construire l'adresse avec agence
+    ordonBanq = ordonAgence ? `${ordonBanq} Agence ${ordonAgence}` : ordonBanq;
+  }
+
+  // Extraire le nom de la société émettrice (partie avant le tiret)
+  const emetteurName = ordonName.split('-')[0] || ordonName;
+
+  const template = `
+${showHeader ? `<div class="letter-header">${emetteurName}</div>` : ''}
+
+<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+
+<div class="center">À l'attention de Monsieur le Directeur<br><b>${ordonBanq}</b></div>
+
+<div class="left">OBJET : Ordre de Virement${isSRBM ? ' (SRBM)' : ''}</div>
+
+Monsieur,
+
+Par le débit de notre compte N° <b>${ordonCompte}</b>, veuillez virer la somme de <b>${montantChiffre} Dhs</b> (<b>${montantLettre}</b>) au profit de <b>${benifName}</b>, domicilié à <b>${benifBanq}</b> - Compte n° <b>${benifCompte}</b>.
+${motif ? `\nMotif : <b>${motif}</b>` : ''}
+
+<div class="signature"><b>Veuillez agréer, Monsieur le Directeur, l'expression de nos sentiments distingués.</b></div>
+
+${showHeader && footer ? `<div class="letter-footer">${footer}</div>` : ''}
+`;
+
+  document.getElementById("documentOutput").innerHTML = template;
+}
+
+// Les autres fonctions generateMise(), generateReleve(), etc. restent inchangées...
+function generateMise() {
+  const date = document.getElementById("date").value || "";
+  const compteSel = document.getElementById("compteMise").selectedOptions[0];
+  const montantChiffre = parseInt(document.getElementById("montantMise").value) || 0;
+  const montantLettre = montantChiffre > 0 ? numberToWords(montantChiffre) : "";
+  const nomBeneficiaire = document.getElementById("nomBeneficiaire").value || "";
+  const cinBeneficiaire = document.getElementById("cinBeneficiaire").value || "";
+  const showHeader = document.getElementById("headerCheckbox").checked;
+
+  const compteBanq = compteSel?.dataset.banq || "";
+  const compteAgence = compteSel?.dataset.agence || "";
+  const compteNum = compteSel?.value || "";
+  const compteName = compteSel?.dataset.name || "";
+  const compteFooter = compteSel?.dataset.footer || "";
+
+  const emetteurName = compteName.split('-')[0];
+  const adresseCompte = compteAgence ? `${compteBanq} Agence ${compteAgence}` : compteBanq;
+
+  const template = `
+${showHeader ? `<div class="letter-header">${emetteurName}</div>` : ''}
+
+<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+
+<div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
+
+<div class="left">OBJET : Mise à disposition</div>
+
+Monsieur,
+
+Nous vous demandons de débiter notre compte N° <b>${compteNum}</b> de la somme de <b>${montantChiffre} Dhs</b> (<b>${montantLettre}</b>) en faveur de <b>${nomBeneficiaire}</b> titulaire de la CIN N° <b>${cinBeneficiaire}</b>.
+
+<div class="signature"><b>Veuillez agréer, Monsieur le Directeur, l'expression de nos sentiments distingués.</b></div>
+
+${showHeader ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
+`;
+
+  document.getElementById("documentOutput").innerHTML = template;
+}
+
+function generateReleve() {
+  const date = document.getElementById("date").value || "";
+  const compteSel = document.getElementById("compteReleve").selectedOptions[0];
+  const mois = document.getElementById("moisReleve").value;
+  const annee = document.getElementById("anneeReleve").value;
+  const showHeader = document.getElementById("headerCheckbox").checked;
+
+  const compteBanq = compteSel?.dataset.banq || "";
+  const compteAgence = compteSel?.dataset.agence || "";
+  const compteNum = compteSel?.value || "";
+  const compteName = compteSel?.dataset.name || "";
+  const compteFooter = compteSel?.dataset.footer || "";
+
+  const emetteurName = compteName.split('-')[0];
+  const adresseCompte = compteAgence ? `${compteBanq} Agence ${compteAgence}` : compteBanq;
+
+  const nomsMois = {
+    "01": "janvier", "02": "février", "03": "mars", "04": "avril", 
+    "05": "mai", "06": "juin", "07": "juillet", "08": "août", 
+    "09": "septembre", "10": "octobre", "11": "novembre", "12": "décembre"
+  };
+
+  const template = `
+${showHeader ? `<div class="letter-header">${emetteurName}</div>` : ''}
+
+<div class="right"><b>Temara le ${formatDate(date)}</b></div>
+
+<div class="center">À l'attention de Monsieur le Directeur<br><b>${adresseCompte}</b></div>
+
+<div class="left">OBJET : Demande de Relevé de Compte</div>
+
+Monsieur,
+
+Nous vous prions de bien vouloir nous établir le relevé de notre compte N° <b>${compteNum}</b> pour le mois de <b>${nomsMois[mois]} ${annee}</b>.
+
+<div class="signature"><b>Veuillez agréer, Monsieur le Directeur, l'expression de nos sentiments distingués.</b></div>
+
+${showHeader ? `<div class="letter-footer">${compteFooter || ''}</div>` : ''}
+`;
+
+  document.getElementById("documentOutput").innerHTML = template;
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+  initAnnees();
+  document.querySelector(".virement-fields").style.display = "block";
+  setVirementMode('manuel'); // Mode manuel par défaut
+  
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
+  document.getElementById('dateOperationCredit').value = today;
+  document.getElementById('dateOperationDebit').value = today;
+});
+</script>
+</body>
+</html>
